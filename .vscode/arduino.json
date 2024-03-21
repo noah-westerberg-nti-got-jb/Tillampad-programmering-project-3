@@ -1,5 +1,6 @@
 {
     "board": "arduino:avr:uno",
     "programmer": "avrisp",
-    "sketch": "Tillampad-programmering-project-3.ino"
+    "port": "COM4",
+    "sketch": "Main\\Main.ino"
 }
