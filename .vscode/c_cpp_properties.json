@@ -16,14 +16,17 @@
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino\\**",
+                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino",
                 "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\variants\\standard",
-                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\**",
+                "C:\\Users\\noah.westerberg2\\Documents\\Arduino\\libraries\\RotaryEncoder-1.5.3\\src",
+                "C:\\Users\\noah.westerberg2\\Documents\\Arduino\\libraries\\Adafruit_SSD1306\\src",
+                "C:\\Users\\noah.westerberg2\\Documents\\Arduino\\libraries\\Adafruit_GFX_Library",
+                "C:\\Users\\noah.westerberg2\\Documents\\Arduino\\libraries\\Adafruit_BusIO",
+                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\Wire\\src",
+                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\SPI\\src",
                 "c:\\users\\noah.westerberg2\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include",
                 "c:\\users\\noah.westerberg2\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include-fixed",
-                "c:\\users\\noah.westerberg2\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include",
-                "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\libraries\\**",
-                "C:\\Users\\noah.westerberg2\\Documents\\Arduino\\libraries\\**"
+                "c:\\users\\noah.westerberg2\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include"
             ],
             "forcedInclude": [
                 "C:\\Users\\noah.westerberg2\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino\\Arduino.h"

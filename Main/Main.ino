@@ -1,6 +1,5 @@
 #include <RotaryEncoder.h>
 #include <Adafruit_SSD1306.h>
-#include <Wire.h>
 
 // Example for Arduino UNO with input signals on pin 2 and 3
 #define PIN_IN1 A2
@@ -24,23 +23,33 @@ RotaryEncoder encoder(PIN_IN1, PIN_IN2, RotaryEncoder::LatchMode::TWO03);
 #define SCREEN_ADDRESS 0x3D ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+struct screenPosition
+{
+    uint8_t x = 0;
+    uint8_t y = 0;
+};
+
+struct UIText
+{
+    String text = "";
+    screenPosition position;
+};
+
 class UIElement
 {
-
-}
+};
 
 class UILayer
 {
-
-}
+    uint8_t selectedElement = 0;
+};
 
 class UI
 {
-    int selectedLayer
-}
+    uint8_t selectedLayer = 0;
+};
 
-void
-setup()
+void setup()
 {
     Serial.begin(9600);
     while (!Serial)
@@ -54,11 +63,16 @@ setup()
             ; // Don't proceed, loop forever
     }
 
+    display.display();
+
+    display.drawRect(20, 20, 100, 50, 1);
+
     Serial.println("on");
 }
 
 void loop()
 {
+    screenPosition position;
     static int pos = 0;
     encoder.tick();
 
@@ -69,6 +83,11 @@ void loop()
         Serial.print(newPos);
         Serial.print(" dir:");
         Serial.println((int)(encoder.getDirection()));
+        int dir = (int)encoder.getDirection();
         pos = newPos;
+        position.x += dir;
+        position.y += dir;
+
+        display.drawPixel(position.x, position.y, 2);
     }
 }
