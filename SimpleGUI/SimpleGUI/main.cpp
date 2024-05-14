@@ -18,107 +18,92 @@ class Layer {
 
 	std::vector<Layer*> subLayers;
 	int numberOfWindows;
-	int direction;
+	bool selected = true;
+
+	int markerPosition = 0;
 
 	Color color;
 
-public:
-	Layer(int width, int height, int cornerXPosition, int cornerYPostiion, nlohmann::json layerJson, Color color) {
-		this->width = width;
-		this->height = height;
-		this->direction = direction;
-		this->cornerXPosition = cornerXPosition;
-		this->cornerYPostiion = cornerYPostiion;
-		this->color = color;
-
-		bool reverse = false;
-		/*switch (direction) {
-		case Horizontal:
-			float windowSizeRatio = (width % windowSize);
-			numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
-			break;;
-		case Vertical:
-			float windowSizeRatio = (height % windowSize);
-			numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
-			break;
-		};*/
-
+	void DrawBorder() {
+		BeginDrawing();
+		DrawRectangleLines(cornerXPosition + 10, cornerYPostiion + 10, width - 20, height - 20, color);
+		EndDrawing();
 	}
 
-	void DrawBorder() {
+	void DrawSelectionBorder() {
 		BeginDrawing();
 		DrawRectangleLines(cornerXPosition, cornerYPostiion, width, height, color);
 		EndDrawing();
 	}
+public:
+	Layer(int width, int height, int cornerXPosition, int cornerYPostiion, nlohmann::json layerJson) {
+		this->width = width;
+		this->height = height;
+		this->cornerXPosition = cornerXPosition;
+		this->cornerYPostiion = cornerYPostiion;
+		this->color = WHITE; // temp
+		this->numberOfWindows = layerJson["number_of_sections"];
+		if (this->numberOfWindows <= 1)
+			this->numberOfWindows = 0;
+		
+			int subLayerCornerXPosition = cornerXPosition, SubLayerCornerYPosition = cornerYPostiion;
+			int subLayerWidth = width, subLayerHeight = height;
+			for (int i = 0; i < this->numberOfWindows; i++) {
+
+				switch ((int)layerJson["direction"])
+				{
+				case Horizontal:
+					// ooptimalt att sätta samma värde flera gånger, men koden blir mer "clean"
+					subLayerWidth = width / layerJson["number_of_sections"];
+					subLayerCornerXPosition += subLayerWidth;
+					break;
+				case Vertical:
+					subLayerHeight = height / layerJson["number_of_sections"];
+					SubLayerCornerYPosition += subLayerHeight;
+					break;
+				}
+				
+				subLayers.emplace_back(new Layer(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, layerJson["sections"][i]));
+			}
+		 
+	}
+
+	void Draw() {
+		DrawBorder();
+		if (selected)
+			DrawSelectionBorder();
+		
+		for (int i = 0; i < numberOfWindows; i++) {
+			subLayers[i]->Draw();
+		}
+	}
 };
 
 int main(int argc, char* argv[]) {
-	 //Initialization
+	//Initialization
 
 	std::ifstream file("app1.json");
 	nlohmann::json json;
 	file >> json;
 
-	std::cout << std::setw(4) << json["sections"][0]["sections"];
-
 	const int screenWidth = 960;
 	const int screenHeight = 720;
+
+	Layer baseLayer(screenWidth, screenHeight, 0, 0, json);
 
 	InitWindow(screenWidth, screenHeight, "Simple GUI");
 	SetTargetFPS(60); // Set our game to run at 60 frames-per-second when possible
 
-	Color color;
-	int colorSwitch = 0;
-	float time = 0;
 	// `WindowShouldClose` detects window close
 	// Main game loop
 	while (!WindowShouldClose()) {
 		// Update;
-		if (IsKeyDown(KEY_SPACE)) {
-			time += GetFrameTime();
-			if (time > 0.1) {
-				time = 0;
-				colorSwitch++;
-				if (colorSwitch >= 8) colorSwitch = 0;
-			}
-		}
-		switch (colorSwitch)
-		{
-		case 0:
-			color = WHITE;
-			break;
-		case 1:
-			color = GRAY;
-			break;
-		case 2:
-			color = RED;
-			break;
-		case 3:
-			color = BLUE;
-			break;
-		case 4:
-			color = DARKBLUE;
-			break;
-		case 5:
-			color = GREEN;
-			break;
-		case 6:
-			color = DARKGREEN;
-			break;
-		case 7:
-			color = ORANGE;
-			break;
-		}
 
 		// Draw
 
 		BeginDrawing();
-		ClearBackground(BLACK);
-
-		DrawText(TextFormat("Delta time: %f", time), 10, 10, 30, WHITE);
-
-		const int fontSize = 50;
-		DrawText("Hello, world!", ((float)screenWidth / 2) - (((float)fontSize * 6) / 2), (float)screenHeight / 2, fontSize, color);
+		
+		baseLayer.Draw();
 
 		EndDrawing();
 	}
