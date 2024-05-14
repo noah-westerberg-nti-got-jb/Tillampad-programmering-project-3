@@ -1,8 +1,71 @@
 {
+  "type": "layer",
   "direction": 0,
-  "number_of_sublayers": 2,
-  "layers": [
-    "yo",
-    56
+  "number_of_sections": 2,
+  "sections": [
+    {
+      "type": "layer",
+      "direction": 1,
+      "number_of_sections": 3,
+      "sections": [
+        {
+          "type": "layer",
+          "direction": 0,
+          "number_of_sections": 2,
+          "sections": [
+            {
+              "type": "layer",
+              "direction": 0,
+              "number_of_sections": 1
+            },
+            {
+              "type": "layer",
+              "direction": 1,
+              "number_of_sections": 2,
+              "sections": [
+                {
+                  "type": "layer",
+                  "direction": 0,
+                  "number_of_sections": 1
+                },
+                {
+                  "type": "layer",
+                  "direction": 0,
+                  "number_of_sections": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "layer",
+          "direction": 0,
+          "number_of_sections": 1
+        },
+        {
+          "type": "layer",
+          "direction": 1,
+          "number_of_sections": 2,
+          "sections": [
+            {
+              "type": "layer",
+              "direction": 0,
+              "number_of_sections": 1
+            },
+            {
+              "type": "layer",
+              "direction": 0,
+              "number_of_sections": 1
+
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "layer",
+      "direction": 0,
+      "number_of_sections" : 0
+    }
   ]
 }

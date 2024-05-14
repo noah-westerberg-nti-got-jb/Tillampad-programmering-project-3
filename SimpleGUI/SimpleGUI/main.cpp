@@ -23,7 +23,7 @@ class Layer {
 	Color color;
 
 public:
-	Layer(int width, int height, int direction, int cornerXPosition, int cornerYPostiion, Color color) {
+	Layer(int width, int height, int cornerXPosition, int cornerYPostiion, nlohmann::json layerJson, Color color) {
 		this->width = width;
 		this->height = height;
 		this->direction = direction;
@@ -58,6 +58,8 @@ int main(int argc, char* argv[]) {
 	std::ifstream file("app1.json");
 	nlohmann::json json;
 	file >> json;
+
+	std::cout << std::setw(4) << json["sections"][0]["sections"];
 
 	const int screenWidth = 960;
 	const int screenHeight = 720;
