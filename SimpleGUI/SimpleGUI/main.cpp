@@ -1,11 +1,13 @@
 #include <raylib.h>
-//#include <memory>
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <string>
 
-#define LeftToRight 0
-#define RightToLeft 1
-#define TopToBottom 2
-#define BottomToTop 3
-
+#define Horizontal 0
+#define Vertical 1
 
 class Layer {
 	int width;
@@ -13,15 +15,15 @@ class Layer {
 	// position for top left corner
 	int cornerXPosition;
 	int cornerYPostiion;
-	
-	Layer* subLayers[10];
+
+	std::vector<Layer*> subLayers;
 	int numberOfWindows;
 	int direction;
-	
+
 	Color color;
-	
+
 public:
-	Layer(int width, int height, int direction, int windowSize, int cornerXPosition, int cornerYPostiion, Color color) {
+	Layer(int width, int height, int direction, int cornerXPosition, int cornerYPostiion, Color color) {
 		this->width = width;
 		this->height = height;
 		this->direction = direction;
@@ -30,27 +32,16 @@ public:
 		this->color = color;
 
 		bool reverse = false;
-		switch (direction) {
-			case RightToLeft:
-				reverse = true;
-			case LeftToRight:
-				float windowSizeRatio = (width % windowSize);
-				numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
-				break;
-			case BottomToTop:
-				reverse = true;
-			case TopToBottom:
-				float windowSizeRatio = (height % windowSize);
-				numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
-				break;
-		};
-
-		if (numberOfWindows > 1) {
-			for (int i = 0; i < numberOfWindows; i++) {
-
-				subLayers[i] = new Layer();
-			}
-		}
+		/*switch (direction) {
+		case Horizontal:
+			float windowSizeRatio = (width % windowSize);
+			numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
+			break;;
+		case Vertical:
+			float windowSizeRatio = (height % windowSize);
+			numberOfWindows = windowSizeRatio - (windowSizeRatio % 1);
+			break;
+		};*/
 
 	}
 
@@ -59,22 +50,20 @@ public:
 		DrawRectangleLines(cornerXPosition, cornerYPostiion, width, height, color);
 		EndDrawing();
 	}
-
-	/*void DeleteLayer() {
-		free(subLayers);
-		free(this);
-	}*/
 };
 
 int main(int argc, char* argv[]) {
-	// Initialization
+	 //Initialization
+
+	std::ifstream file("app1.json");
+	nlohmann::json json;
+	file >> json;
 
 	const int screenWidth = 960;
 	const int screenHeight = 720;
 
 	InitWindow(screenWidth, screenHeight, "Simple GUI");
 	SetTargetFPS(60); // Set our game to run at 60 frames-per-second when possible
-
 
 	Color color;
 	int colorSwitch = 0;
