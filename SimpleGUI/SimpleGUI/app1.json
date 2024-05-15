@@ -1,6 +1,9 @@
 {
   "type": "layer",
+  "color": [ 255, 255, 255, 255 ],
+  "selection_color": [ 0, 0, 255, 255 ],
   "direction": 0,
+  "padding": 10,
   "number_of_sections": 2,
   "sections": [
     {
@@ -16,22 +19,23 @@
             {
               "type": "layer",
               "direction": 0,
-              "number_of_sections": 1
+              "number_of_sections": 0
             },
             {
               "type": "layer",
+              "color": [ 255, 0, 0, 255 ],
               "direction": 1,
               "number_of_sections": 2,
               "sections": [
                 {
                   "type": "layer",
                   "direction": 0,
-                  "number_of_sections": 1
+                  "number_of_sections": 0
                 },
                 {
                   "type": "layer",
                   "direction": 0,
-                  "number_of_sections": 1
+                  "number_of_sections": 0
                 }
               ]
             }
@@ -40,7 +44,7 @@
         {
           "type": "layer",
           "direction": 0,
-          "number_of_sections": 1
+          "number_of_sections": 0
         },
         {
           "type": "layer",
@@ -50,12 +54,12 @@
             {
               "type": "layer",
               "direction": 0,
-              "number_of_sections": 1
+              "number_of_sections": 0
             },
             {
               "type": "layer",
               "direction": 0,
-              "number_of_sections": 1
+              "number_of_sections": 0
 
             }
           ]
@@ -65,7 +69,7 @@
     {
       "type": "layer",
       "direction": 0,
-      "number_of_sections" : 0
+      "number_of_sections": 0
     }
   ]
 }
