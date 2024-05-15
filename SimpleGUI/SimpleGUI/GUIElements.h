@@ -50,7 +50,47 @@ class Layer {
 		else
 			*color = { layerJson[key][0], layerJson[key][1], layerJson[key][2], layerJson[key][3] };
 	}
+
+	void CreateSubLayers(int width, int height, int cornerXPosition, int cornerYPosition, nlohmann::json parentLayerJson) {
+		int subLayerCornerXPosition = cornerXPosition + this->padding, SubLayerCornerYPosition = cornerYPostiion + this->padding;
+		int* shiftingCorner = &subLayerCornerXPosition;
+		int subLayerWidth = width - (2 * this->padding), subLayerHeight = height - (2 * this->padding);
+		int* variableSide = &subLayerWidth;
+		switch ((int)parentLayerJson["direction"])
+		{
+		case Horizontal:
+			subLayerWidth = (width / parentLayerJson["number_of_sections"]) - this->padding;
+			variableSide = &subLayerWidth;
+			shiftingCorner = &subLayerCornerXPosition;
+			break;
+		case Vertical:
+			subLayerHeight = (height / parentLayerJson["number_of_sections"]) - this->padding;
+			variableSide = &subLayerHeight;
+			shiftingCorner = &SubLayerCornerYPosition;
+			break;
+		}
+		for (int i = 0; i < numberOfWindows; i++) {
+			subLayers.emplace_back(new Layer(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, this, parentLayerJson["sections"][i]));
+			*shiftingCorner += *variableSide;
+		}
+	}
 public:
+	Layer(nlohmann::json json) {
+		this->parentLayer = nullptr;
+		this->width = json["window_size"][0];
+		this->height = json["window_size"][1];;
+		this->cornerXPosition = 0;
+		this->cornerYPostiion = 0;
+		this->padding = json["padding"];
+		this->borderColor = { json["border_color"][0], json["border_color"][1], json["border_color"][2], json["border_color"][3] };
+		this->selectionColor = { json["selection_color"][0], json["selection_color"][1], json["selection_color"][2], json["selection_color"][3] };
+		this->backgroundColor = { json["background_color"][0], json["background_color"][1], json["background_color"][2], json["background_color"][3] };
+		this->textColor = { json["text_color"][0], json["text_color"][1], json["text_color"][2], json["text_color"][3] };
+		numberOfWindows = json["number_of_sections"];
+		if (numberOfWindows == 0) return;
+		
+		CreateSubLayers(this->width, this->height, this->cornerXPosition, this->cornerYPostiion, json);
+	}
 	Layer(int width, int height, int cornerXPosition, int cornerYPostiion, Layer* parentLayer, nlohmann::json layerJson) {
 		this->parentLayer = parentLayer;
 		this->width = width;
@@ -74,28 +114,7 @@ public:
 		numberOfWindows = layerJson["number_of_sections"];
 		if (numberOfWindows == 0) return;
 
-		int subLayerCornerXPosition = cornerXPosition + this->padding, SubLayerCornerYPosition = cornerYPostiion + this->padding;
-		int* shiftingCorner = &subLayerCornerXPosition;
-		int subLayerWidth = width - (2 * this->padding), subLayerHeight = height - (2 * this->padding);
-		int* variableSide = &subLayerWidth;
-		switch ((int)layerJson["direction"])
-		{
-		case Horizontal:
-			// ooptimalt att sätta samma värde flera gånger, men koden blir mer "clean"
-			subLayerWidth = (width / layerJson["number_of_sections"]) - this->padding;
-			variableSide = &subLayerWidth;
-			shiftingCorner = &subLayerCornerXPosition;
-			break;
-		case Vertical:
-			subLayerHeight = (height / layerJson["number_of_sections"]) - this->padding;
-			variableSide = &subLayerHeight;
-			shiftingCorner = &SubLayerCornerYPosition;
-			break;
-		}
-		for (int i = 0; i < numberOfWindows; i++) {
-			subLayers.emplace_back(new Layer(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, this, layerJson["sections"][i]));
-			*shiftingCorner += *variableSide;
-		}
+		CreateSubLayers(this->width, this->height, this->cornerXPosition, this->cornerYPostiion, json);
 	}
 
 	void Draw() {
