@@ -22,14 +22,20 @@ int main(int argc, char* argv[]) {
 	int framesPassed = 0;
 	float framesPerSecond = 0;
 	std::string isFrameEven;
+	int framesPassedCurrentLevel = 0;
+	std::string framesPassedSuffix = "";
 
 	Variables variables;
 	variables.variablesInt.push_back({ "frames_passed", &framesPassed });
 	variables.variablesFloat.push_back({ "frames_per_second", &framesPerSecond });
 	variables.variablesString.push_back({ "even_or_odd_frame", &isFrameEven });
+	variables.variablesInt.push_back({ "frames_passed_prefix", &framesPassedCurrentLevel });
+	variables.variablesString.push_back({ "frames_passed_suffix", &framesPassedSuffix });
 
 	Window baseLayer(json, &variables);
 	Window* currentSelection = &baseLayer;
+
+	int currentLevel = 1;
 
 	SetTargetFPS(60); // Set our game to run at 60 frames-per-second when possible
 
@@ -37,7 +43,29 @@ int main(int argc, char* argv[]) {
 	// Main game loop
 	while (!WindowShouldClose()) {
 		// Update;
-		
+
+		if (framesPassed % currentLevel == 0)
+			framesPassedCurrentLevel++;
+
+		if (framesPassed != 0) {
+			if (framesPassed % 100 == 0 && currentLevel < 100) {
+				framesPassedCurrentLevel = 1;
+				currentLevel = 100;
+				framesPassedSuffix = "hundred";
+			}
+			else if (framesPassed % 1000 == 0 && currentLevel < 1000) {
+				framesPassedCurrentLevel = 1;
+				currentLevel = 1000;
+				framesPassedSuffix = "thousand";
+			}
+			else if (framesPassed % 1000000 == 0 && currentLevel < 1000000) {
+				framesPassedCurrentLevel = 1;
+				currentLevel = 1000000;
+				framesPassedSuffix = "million";
+			}
+		}
+
+
 		if (IsKeyPressed(KEY_SPACE)) {
 			currentSelection = currentSelection->EnterSelection();
 		}
@@ -50,16 +78,16 @@ int main(int argc, char* argv[]) {
 		else if (MOVE_BOTTOM_LEFT) {
 			currentSelection->MoveCursor(1);
 		}
-		
+
 		// Draw
 		BeginDrawing();
-		
+
 		//ClearBackground(BLACK);
 
 		baseLayer.Draw();
 
 		EndDrawing();
-		 
+
 		framesPassed++;
 		if ((framesPassed + 1) % 2 == 0)
 			isFrameEven = "Yes";

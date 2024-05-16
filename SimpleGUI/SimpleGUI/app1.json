@@ -98,7 +98,7 @@
       "sections": [
         {
           "type": "text",
-          "number_of_text_segments": 5,
+          "number_of_text_segments": 8,
           "text_segments": [
             {
               "text": "this is some text"
@@ -124,6 +124,23 @@
               "text": "\nIs the current frame even? %s",
               "variable": {
                 "name": "even_or_odd_frame",
+                "type": "string"
+              }
+            },
+            {
+              "text": "\nYou can also show multiple variables in one line:"
+            },
+            {
+              "text": "\nThere have passed over %d",
+              "variable": {
+                "name": "frames_passed_prefix",
+                "type": "int"
+              }
+            },
+            {
+              "text": " %s frames!",
+              "variable": {
+                "name": "frames_passed_suffix",
                 "type": "string"
               }
             }
