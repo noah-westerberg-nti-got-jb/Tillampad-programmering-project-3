@@ -121,7 +121,7 @@
               }
             },
             {
-              "text": "\nthis text shows a string %s",
+              "text": "\nIs the current frame even? %s",
               "variable": {
                 "name": "even_or_odd_frame",
                 "type": "string"

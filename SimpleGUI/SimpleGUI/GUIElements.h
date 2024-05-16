@@ -1,3 +1,4 @@
+#include <iostream>
 #include <raylib.h>
 #include <nlohmann/json.hpp>
 #include <vector>
@@ -98,7 +99,7 @@ public:
 
 	void UpdateText() {
 		text = "";
-		
+
 		for (int i = 0; i < json["number_of_text_segments"]; i++) {
 			std::string combinedString = std::string(text) + (std::string)(json["text_segments"][i]["text"]);
 			if (json["text_segments"][i]["variable"] != nullptr && variables != nullptr) {
@@ -128,7 +129,7 @@ public:
 	// Draw text using font inside rectangle limits with support for text selection
 	void Draw() {
 		UpdateText();
-		
+
 		int selectStart = 0, selectLength = 0;
 		float spacing = 2.0;
 		bool wordWrap = true;
@@ -406,11 +407,18 @@ public:
 		}
 	}
 
+	Window* EnterSelf() {
+		if (subWindows.size() >= 1)
+			return this;
+		else 
+			return parentWindow;
+	}
+
 	Window* EnterSelection() {
 		if (subWindows.size() >= 1) {
 			subWindows[cursorPosition]->RemoveSelection();
 			subWindows[cursorPosition]->MoveCursor(0);
-			return subWindows[cursorPosition];
+			return subWindows[cursorPosition]->EnterSelf();
 		}
 		return this;
 	}

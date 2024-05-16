@@ -62,9 +62,9 @@ int main(int argc, char* argv[]) {
 		 
 		framesPassed++;
 		if ((framesPassed + 1) % 2 == 0)
-			isFrameEven = "even";
+			isFrameEven = "Yes";
 		else
-			isFrameEven = "odd";
+			isFrameEven = "No";
 		framesPerSecond = 1 / GetFrameTime();
 		std::cout << "fps: " << framesPerSecond << std::endl;
 	}
