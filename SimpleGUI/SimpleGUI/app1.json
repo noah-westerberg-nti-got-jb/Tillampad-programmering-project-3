@@ -1,42 +1,43 @@
 {
-  "window_size": [960, 720],
-  "type": "layer",
+  "window_size": [ 1280, 720 ],
+  "type": "window",
   "text_color": [ 255, 255, 255, 255 ],
   "border_color": [ 255, 255, 255, 255 ],
   "selection_color": [ 0, 0, 255, 255 ],
   "background_color": [ 0, 0, 0, 255 ],
+  "font_size": 20,
   "direction": 0,
   "padding": 10,
   "number_of_sections": 2,
   "sections": [
     {
-      "type": "layer",
+      "type": "window",
       "direction": 1,
       "number_of_sections": 3,
       "sections": [
         {
-          "type": "layer",
+          "type": "window",
           "direction": 0,
           "number_of_sections": 2,
           "sections": [
             {
-              "type": "layer",
+              "type": "window",
               "direction": 0,
               "number_of_sections": 0
             },
             {
-              "type": "layer",
+              "type": "window",
               "border_color": [ 255, 0, 0, 255 ],
               "direction": 1,
               "number_of_sections": 2,
               "sections": [
                 {
-                  "type": "layer",
+                  "type": "window",
                   "direction": 0,
                   "number_of_sections": 0
                 },
                 {
-                  "type": "layer",
+                  "type": "window",
                   "direction": 0,
                   "number_of_sections": 0
                 }
@@ -45,24 +46,44 @@
           ]
         },
         {
-          "type": "layer",
+          "type": "window",
           "direction": 0,
           "number_of_sections": 0
         },
         {
-          "type": "layer",
+          "type": "window",
           "direction": 1,
           "number_of_sections": 2,
           "sections": [
             {
-              "type": "layer",
+              "type": "window",
               "direction": 0,
               "number_of_sections": 0
             },
             {
-              "type": "layer",
+              "type": "window",
               "direction": 0,
-              "number_of_sections": 0
+              "number_of_sections": 1,
+              "sections": [
+                {
+                  "type": "text",
+                  "text_color": [ 0, 255, 0, 255 ],
+                  "font_size": 15,
+                  "number_of_text_segments": 2,
+                  "text_segments": [
+                    {
+                      "text": "This text is GREEN!!!"
+                    },
+                    {
+                      "text": "\nVariables can be displayed in multiple places, fps: %f",
+                      "variable": {
+                        "name": "frames_per_second",
+                        "type": "float"
+                      }
+                    }
+                  ]
+                }
+              ]
 
             }
           ]
@@ -70,10 +91,45 @@
       ]
     },
     {
-      "type": "layer",
+      "type": "window",
       "direction": 0,
-      "number_of_sections": 0,
-      "background_color": [200, 50, 150, 255]
+      "number_of_sections": 1,
+      "background_color": [ 200, 50, 150, 255 ],
+      "sections": [
+        {
+          "type": "text",
+          "number_of_text_segments": 5,
+          "text_segments": [
+            {
+              "text": "this is some text"
+            },
+            {
+              "text": " this text is in a second segment"
+            },
+            {
+              "text": "\nthis text shows how many frames have passed: %d",
+              "variable": {
+                "name": "frames_passed",
+                "type": "int"
+              }
+            },
+            {
+              "text": "\nthis text shows the fps: %f",
+              "variable": {
+                "name": "frames_per_second",
+                "type": "float"
+              }
+            },
+            {
+              "text": "\nthis text shows a string %s",
+              "variable": {
+                "name": "even_or_odd_frame",
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

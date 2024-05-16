@@ -17,11 +17,20 @@ int main(int argc, char* argv[]) {
 
 	const int screenWidth = json["window_size"][0];
 	const int screenHeight = json["window_size"][1];
-
-	Layer baseLayer(json);
-	Layer* currentLayer = &baseLayer;
-
 	InitWindow(screenWidth, screenHeight, "Simple GUI");
+
+	int framesPassed = 0;
+	float framesPerSecond = 0;
+	std::string isFrameEven;
+
+	Variables variables;
+	variables.variablesInt.push_back({ "frames_passed", &framesPassed });
+	variables.variablesFloat.push_back({ "frames_per_second", &framesPerSecond });
+	variables.variablesString.push_back({ "even_or_odd_frame", &isFrameEven });
+
+	Window baseLayer(json, &variables);
+	Window* currentSelection = &baseLayer;
+
 	SetTargetFPS(60); // Set our game to run at 60 frames-per-second when possible
 
 	// `WindowShouldClose` detects window close
@@ -30,16 +39,16 @@ int main(int argc, char* argv[]) {
 		// Update;
 		
 		if (IsKeyPressed(KEY_SPACE)) {
-			currentLayer = currentLayer->EnterSubLayer();
+			currentSelection = currentSelection->EnterSelection();
 		}
 		else if (IsKeyPressed(KEY_BACKSPACE)) {
-			currentLayer = currentLayer->ExitLayer();
+			currentSelection = currentSelection->ExitWindow();
 		}
 		else if (MOVE_UP_RIGHT) {
-			currentLayer->MoveCursor(-1);
+			currentSelection->MoveCursor(-1);
 		}
 		else if (MOVE_BOTTOM_LEFT) {
-			currentLayer->MoveCursor(1);
+			currentSelection->MoveCursor(1);
 		}
 		
 		// Draw
@@ -50,8 +59,14 @@ int main(int argc, char* argv[]) {
 		baseLayer.Draw();
 
 		EndDrawing();
-		
-		std::cout << "fps: " << 1 / GetFrameTime() << std::endl;
+		 
+		framesPassed++;
+		if ((framesPassed + 1) % 2 == 0)
+			isFrameEven = "even";
+		else
+			isFrameEven = "odd";
+		framesPerSecond = 1 / GetFrameTime();
+		std::cout << "fps: " << framesPerSecond << std::endl;
 	}
 
 	// De-Initialization
