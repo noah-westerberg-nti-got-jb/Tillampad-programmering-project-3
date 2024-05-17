@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip>
 #include <raylib.h>
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -9,9 +8,9 @@
 #define MOVE_BOTTOM_LEFT (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_D))
 
 int main(int argc, char* argv[]) {
-	//Initialization 
+	// //Initialization 
 
-	std::ifstream file("app1.json");
+	std::ifstream file(argv[1]);
 	nlohmann::json json;
 	file >> json;
 
@@ -19,12 +18,18 @@ int main(int argc, char* argv[]) {
 	const int screenHeight = json["window_size"][1];
 	InitWindow(screenWidth, screenHeight, "Simple GUI");
 
-	int framesPassed = 0;
+	// Initialisering av variabler
 	float framesPerSecond = 0;
+
+	int framesPassed = 0;
+
 	std::string isFrameEven;
+
+	int currentLevel = 1;
 	int framesPassedCurrentLevel = 0;
 	std::string framesPassedSuffix = "";
 
+	// Initialisering av variabler behållaren
 	Variables variables;
 	variables.variablesInt.push_back({ "frames_passed", &framesPassed });
 	variables.variablesFloat.push_back({ "frames_per_second", &framesPerSecond });
@@ -32,17 +37,21 @@ int main(int argc, char* argv[]) {
 	variables.variablesInt.push_back({ "frames_passed_prefix", &framesPassedCurrentLevel });
 	variables.variablesString.push_back({ "frames_passed_suffix", &framesPassedSuffix });
 
+	// Initialisering av GUI:n 
 	Window baseLayer(json, &variables);
 	Window* currentSelection = &baseLayer;
 
-	int currentLevel = 1;
-
 	SetTargetFPS(60); // Set our game to run at 60 frames-per-second when possible
 
-	// `WindowShouldClose` detects window close
-	// Main game loop
+	// // `WindowShouldClose` detects window close
+	// // Main game loop
 	while (!WindowShouldClose()) {
-		// Update;
+		// // Update;
+
+		if ((framesPassed) % 2 == 0)
+			isFrameEven = "Yes";
+		else
+			isFrameEven = "No";
 
 		if (framesPassed % currentLevel == 0)
 			framesPassedCurrentLevel++;
@@ -65,7 +74,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-
+		// Input
 		if (IsKeyPressed(KEY_SPACE)) {
 			currentSelection = currentSelection->EnterSelection();
 		}
@@ -79,27 +88,21 @@ int main(int argc, char* argv[]) {
 			currentSelection->MoveCursor(1);
 		}
 
-		// Draw
+		// // Draw
 		BeginDrawing();
-
-		//ClearBackground(BLACK);
 
 		baseLayer.Draw();
 
 		EndDrawing();
 
 		framesPassed++;
-		if ((framesPassed + 1) % 2 == 0)
-			isFrameEven = "Yes";
-		else
-			isFrameEven = "No";
+
 		framesPerSecond = 1 / GetFrameTime();
-		std::cout << "fps: " << framesPerSecond << std::endl;
 	}
 
-	// De-Initialization
+	// // De-Initialization
 
-	CloseWindow(); // Close window and OpenGL context
+	CloseWindow(); // // Close window and OpenGL context
 
 	return 0;
 }

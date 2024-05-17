@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app1.json">
+    <None Include="example.json">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

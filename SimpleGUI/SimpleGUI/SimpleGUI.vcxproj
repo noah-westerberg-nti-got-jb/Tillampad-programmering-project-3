@@ -130,7 +130,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app1.json" />
+    <None Include="example.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GUIElements.h" />

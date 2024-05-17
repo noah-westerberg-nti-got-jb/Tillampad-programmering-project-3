@@ -1,0 +1,238 @@
+{
+  "window_size": [ 1280, 720 ],
+  "type": "window",
+  "text_color": [ 255, 255, 255, 255 ],
+  "border_color": [ 255, 255, 255, 255 ],
+  "selection_color": [ 0, 0, 255, 255 ],
+  "background_color": [ 0, 0, 0, 255 ],
+  "font_size": 20,
+  "direction": 0,
+  "padding": 10,
+  "sections": [
+    {
+      "type": "window",
+      "direction": 1,
+      "sections": [
+        {
+          "type": "window",
+          "direction": 0,
+          "sections": [
+            {
+              "type": "window",
+              "direction": 0
+            },
+            {
+              "type": "window",
+              "border_color": [ 255, 0, 0, 255 ],
+              "direction": 1,
+              "sections": [
+                {
+                  "type": "window",
+                  "direction": 0
+                },
+                {
+                  "type": "text",
+                  "text_segments": [
+                    {
+                      "text": "Text in second section"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "window",
+          "direction": 0,
+          "sections": [
+            {
+              "type": "text",
+              "text_color": [ 0, 255, 0, 255 ],
+              "font_size": 18,
+              "text_segments": [
+                {
+                  "text": "This text is green!"
+                },
+                {
+                  "text": "\nVariables can be displayed in multiple places, fps: %.1f",
+                  "variable": {
+                    "name": "frames_per_second",
+                    "type": "float"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "window",
+          "direction": 1,
+          "selection_color": [ 255, 255, 0, 255 ],
+          "sections": [
+            {
+              "type": "window",
+              "direction": 0,
+              "sections": [
+                {
+                  "type": "text",
+                  "text_segments": [
+                    {
+                      "text": "Here the selection color is yellow"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "window",
+              "direction": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "window",
+      "direction": 1,
+      "background_color": [ 200, 50, 150, 255 ],
+      "sections": [
+        {
+          "type": "text",
+          "text_segments": [
+            {
+              "text": "This is some text."
+            },
+            {
+              "text": " This text is in a second segment"
+            },
+            {
+              "text": "\nThis text shows how many frames have passed: %d",
+              "variable": {
+                "name": "frames_passed",
+                "type": "int"
+              }
+            },
+            {
+              "text": "\nThis text shows the fps: %f",
+              "variable": {
+                "name": "frames_per_second",
+                "type": "float"
+              }
+            },
+            {
+              "text": "\nIs the current frame even? %s",
+              "variable": {
+                "name": "even_or_odd_frame",
+                "type": "string"
+              }
+            },
+            {
+              "text": "\nYou can also show multiple variables in one line:"
+            },
+            {
+              "text": "\nThere have passed over %d",
+              "variable": {
+                "name": "frames_passed_prefix",
+                "type": "int"
+              }
+            },
+            {
+              "text": " %s frames!",
+              "variable": {
+                "name": "frames_passed_suffix",
+                "type": "string"
+              }
+            }
+          ]
+        },
+        {
+          "type": "window",
+          "direction": 0,
+          "sections": [
+            {
+              "type": "window",
+              "direction": 1,
+              "sections": [
+                {
+                  "type": "text",
+                  "text_segments": [
+                    {
+                      "text": "Background color is inherited,"
+                    }
+                  ]
+                },
+                {
+                  "type": "window",
+                  "direction": 0,
+                  "background_color": [ 50, 194, 199, 255 ],
+                  "sections": [
+                    {
+                      "type": "text",
+                      "text_segments": [
+                        {
+                          "text": "but can be set to another value later on"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "window",
+              "direction": 1,
+              "text_color": [ 199, 177, 50, 255 ],
+              "sections": [
+                {
+                  "type": "text",
+                  "text_segments": [
+                    {
+                      "text": "Text color"
+                    }
+                  ]
+                },
+                {
+                  "type": "window",
+                  "direction": 0,
+                  "font_size": 14,
+                  "sections": [
+                    {
+                      "type": "window",
+                      "direction": 0,
+                      "sections": [
+                        {
+                          "type": "text",
+                          "text_segments": [
+                            {
+                              "text": "is inherited,"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "window",
+                      "direction": 0,
+                      "text_color": [ 54, 71, 71, 255 ],
+                      "sections": [
+                        {
+                          "type": "text",
+                          "text_segments": [
+                            {
+                              "text": "but can also be changed later on"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

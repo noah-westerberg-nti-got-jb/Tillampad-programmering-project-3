@@ -19,19 +19,11 @@ public:
 	std::vector<Variable<float>> variablesFloat;
 	std::vector<Variable<std::string>> variablesString;
 
-	template <typename Type>
-	Variable<Type>* FindVariable(std::string name, std::string type) {
-		if (type == "int") {
-			return FindVariableInt(name);
-		}
-		else if (type == "float") {
-			return FindVariableFloat(name);
-		}
-		else if (type == "string") {
-			return FindVariableString(name);
-		}
-	}
 
+	/*
+		Returnerar en pekare till en Variable - instans av
+		respektive typ baserat på det angivna namnet.
+	*/
 	Variable<int>* FindVariableInt(std::string name) {
 		for (int i = 0; i < variablesInt.size(); i++) {
 			if (variablesInt[i].name == name)
@@ -55,6 +47,12 @@ public:
 
 };
 
+/*
+	variable: Pekaren till variabeln som ska ärva värdet.
+	inheritanceVariable: Värdet som ska ärvas om det inte finns ett nytt värde som ska tas från json objektet.
+	json: JSON-objektet som innehåller data för arv.
+	key: Nyckeln för att hämta värdet från JSON-objektet.
+*/
 template<typename Type>
 void InheritValue(Type* variable, Type inheritanceVariable, nlohmann::json json, std::string key) {
 	if (json[key] == nullptr)
@@ -63,6 +61,12 @@ void InheritValue(Type* variable, Type inheritanceVariable, nlohmann::json json,
 		*variable = json[key];
 }
 
+/*
+	color: Pekaren till färgen som ska ärva värdet.
+	inheritanceColor: Färgen som ska ärvas om det inte finns en ny färg som ska tas från json objektet.
+	json: JSON-objektet som innehåller data för arv.
+	key: Nyckeln för att hämta färgvärdet från JSON-objektet
+*/
 void InheritColor(Color* color, Color inheritanceColor, nlohmann::json json, std::string key) {
 	if (json[key] == nullptr)
 		*color = inheritanceColor;
@@ -71,39 +75,45 @@ void InheritColor(Color* color, Color inheritanceColor, nlohmann::json json, std
 }
 
 class Text {
-	int width, height;
-	int cornerXPosition, cornerYPostiion;
-
-	const char* text;
+	const char* text = "";
 	float fontSize;
+	int padding;
 	Color textColor;
 	Font font;
 	Rectangle rec;
 
-	nlohmann::json json;
+	nlohmann::json textSegmentsJson;
 	Variables* variables;
-
 public:
-	Text(int width, int height, int cornerXPosition, int cornerYPostiion, float fontSize, Color textColor, nlohmann::json textJson, Variables* variables) {
-		this->width = width;
-		this->height = height;
-		this->cornerXPosition = cornerXPosition;
-		this->cornerYPostiion = cornerYPostiion;
-		this->json = textJson;
+	/*
+		Konstruktorn för Text-klassen.
+		Tar in parametrar för textens:
+		dimensioner,
+		position,
+		teckenstorlek,
+		padding,
+		textfärg,
+		textens korresponderande json objekt
+		och variabler.
+	*/
+	Text(int width, int height, int cornerXPosition, int cornerYPostiion, float fontSize, int padding, Color textColor, nlohmann::json textJson, Variables* variables) {
+		this->textSegmentsJson = textJson["text_segments"];
 		this->variables = variables;
 		InheritValue<float>(&this->fontSize, fontSize, textJson, "font_size");
 		InheritColor(&this->textColor, textColor, textJson, "text_color");
 		font = GetFontDefault();
-		rec = { (float)cornerXPosition + 4, (float)cornerYPostiion + 4, (float)width - 4, (float)height - 4 };
+		InheritValue<int>(&this->padding, padding, textJson, "padding");
+		rec = { (float)cornerXPosition + this->padding, (float)cornerYPostiion + this->padding, (float)width - (this->padding * 2), (float)height - (this->padding * 2) };
 	}
 
+	// Uppdaterar texten baserat på textSegmentsJson och variables.
 	void UpdateText() {
 		text = "";
 
-		for (int i = 0; i < json["number_of_text_segments"]; i++) {
-			std::string combinedString = std::string(text) + (std::string)(json["text_segments"][i]["text"]);
-			if (json["text_segments"][i]["variable"] != nullptr && variables != nullptr) {
-				auto variable = json["text_segments"][i]["variable"];
+		for (auto textSegment : textSegmentsJson) {
+			std::string combinedString = std::string(text) + (std::string)(textSegment["text"]);
+			if (textSegment["variable"] != nullptr && variables != nullptr) {
+				auto variable = textSegment["variable"];
 				std::string variableName = variable["name"], variableType = variable["type"];
 				if (variableType == "int") {
 					Variable<int>* variablePointer = variables->FindVariableInt(variableName);
@@ -125,8 +135,9 @@ public:
 		}
 	}
 
+	// Ritar texten på skärmen.
 	// https://github.com/raysan5/raylib/blob/master/examples/text/text_rectangle_bounds.c
-	// Draw text using font inside rectangle limits with support for text selection
+	// // Draw text using font inside rectangle limits with support for text selection
 	void Draw() {
 		UpdateText();
 
@@ -135,30 +146,30 @@ public:
 		bool wordWrap = true;
 		Color selectTint = WHITE, selectBackTint = WHITE;
 
-		int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
+		int length = TextLength(text);  // // Total length in bytes of the text, scanned by codepoints in loop
 
-		float textOffsetY = 0;          // Offset between lines (on line break '\n')
-		float textOffsetX = 0.0f;       // Offset X to next character to draw
+		float textOffsetY = 0;         // // Offset between lines (on line break '\n')
+		float textOffsetX = 0.0f;     // // Offset X to next character to draw
 
-		float scaleFactor = fontSize / (float)font.baseSize;     // Character rectangle scaling factor
+		float scaleFactor = fontSize / (float)font.baseSize;    // // Character rectangle scaling factor
 
-		// Word/character wrapping mechanism variables
+		// // Word/character wrapping mechanism variables
 		enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
 		bool state = wordWrap ? MEASURE_STATE : DRAW_STATE;
 
-		int startLine = -1;         // Index where to begin drawing (where a line begins)
-		int endLine = -1;           // Index where to stop drawing (where a line ends)
-		int lastk = -1;             // Holds last value of the character position
+		int startLine = -1;        // // Index where to begin drawing (where a line begins)
+		int endLine = -1;           // // Index where to stop drawing (where a line ends)
+		int lastk = -1;             // // Holds last value of the character position
 
 		for (int i = 0, k = 0; i < length; i++, k++)
 		{
-			// Get next codepoint from byte string and glyph index in font
+			// // Get next codepoint from byte string and glyph index in font
 			int codepointByteCount = 0;
 			int codepoint = GetCodepoint(&text[i], &codepointByteCount);
 			int index = GetGlyphIndex(font, codepoint);
 
-			// NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
-			// but we need to draw all of the bad bytes using the '?' symbol moving one byte
+			// // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
+			// // but we need to draw all of the bad bytes using the '?' symbol moving one byte
 			if (codepoint == 0x3f) codepointByteCount = 1;
 			i += (codepointByteCount - 1);
 
@@ -170,15 +181,15 @@ public:
 				if (i + 1 < length) glyphWidth = glyphWidth + spacing;
 			}
 
-			// NOTE: When wordWrap is ON we first measure how much of the text we can draw before going outside of the rec container
-			// We store this info in startLine and endLine, then we change states, draw the text between those two variables
-			// and change states again and again recursively until the end of the text (or until we get outside of the container).
-			// When wordWrap is OFF we don't need the measure state so we go to the drawing state immediately
-			// and begin drawing on the next line before we can get outside the container.
+			// // NOTE: When wordWrap is ON we first measure how much of the text we can draw before going outside of the rec container
+			// // We store this info in startLine and endLine, then we change states, draw the text between those two variables
+			// // and change states again and again recursively until the end of the text (or until we get outside of the container).
+			// // When wordWrap is OFF we don't need the measure state so we go to the drawing state immediately
+			// // and begin drawing on the next line before we can get outside the container.
 			if (state == MEASURE_STATE)
 			{
-				// TODO: There are multiple types of spaces in UNICODE, maybe it's a good idea to add support for more
-				// Ref: http://jkorpela.fi/chars/spaces.html
+				// // TODO: There are multiple types of spaces in UNICODE, maybe it's a good idea to add support for more
+				// // Ref: http://jkorpela.fi/chars/spaces.html
 				if ((codepoint == ' ') || (codepoint == '\t') || (codepoint == '\n')) endLine = i;
 
 				if ((textOffsetX + glyphWidth) > rec.width)
@@ -202,7 +213,7 @@ public:
 					i = startLine;
 					glyphWidth = 0;
 
-					// Save character position when we switch states
+					// // Save character position when we switch states
 					int tmp = lastk;
 					lastk = k - 1;
 					k = tmp;
@@ -226,10 +237,10 @@ public:
 						textOffsetX = 0;
 					}
 
-					// When text overflows rectangle height limit, just stop drawing
+					// // When text overflows rectangle height limit, just stop drawing
 					if ((textOffsetY + font.baseSize * scaleFactor) > rec.height) break;
 
-					// Draw selection background
+					// // Draw selection background
 					bool isGlyphSelected = false;
 					if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
 					{
@@ -237,7 +248,7 @@ public:
 						isGlyphSelected = true;
 					}
 
-					// Draw current character glyph
+					// // Draw current character glyph
 					if ((codepoint != ' ') && (codepoint != '\t'))
 					{
 						DrawTextCodepoint(font, codepoint, { rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected ? selectTint : textColor);
@@ -267,13 +278,12 @@ class Window {
 	int width;
 	int height;
 	int padding;
-	// position for top left corner
+	// positionen för top vänstra hörnet
 	int cornerXPosition;
 	int cornerYPostiion;
 
 	Window* parentWindow;
 	std::vector<Window*> subWindows;
-	int numberOfWindows = 0;
 
 	bool selected = false;
 
@@ -281,9 +291,10 @@ class Window {
 
 	Color borderColor, selectionColor, backgroundColor, textColor;
 
-	Text* text;
+	Text* text = nullptr;
 	float fontSize;
 
+	// Ritar ut fönstrets gränns
 	void DrawBorder() {
 		DrawRectangleLines(cornerXPosition + padding, cornerYPostiion + padding, width - (2 * padding), height - (2 * padding), borderColor);
 	}
@@ -304,28 +315,33 @@ class Window {
 		switch ((int)parrentWindowJson["direction"])
 		{
 		case Horizontal:
-			subLayerWidth = (width / parrentWindowJson["number_of_sections"]) - this->padding;
+			subLayerWidth = (width / (int)parrentWindowJson["sections"].size()) - this->padding;
 			variableSide = &subLayerWidth;
 			shiftingCorner = &subLayerCornerXPosition;
 			break;
 		case Vertical:
-			subLayerHeight = (height / parrentWindowJson["number_of_sections"]) - this->padding;
+			subLayerHeight = (height / (int)parrentWindowJson["sections"].size()) - this->padding;
 			variableSide = &subLayerHeight;
 			shiftingCorner = &SubLayerCornerYPosition;
 			break;
 		}
-		for (int i = 0; i < numberOfWindows; i++) {
-			auto type = parrentWindowJson["sections"][i]["type"];
+		for (auto section : parrentWindowJson["sections"]) {
+			std::string type = section["type"];
 
 			if (type == "window")
-				subWindows.emplace_back(new Window(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, this, parrentWindowJson["sections"][i], variables));
+				subWindows.emplace_back(new Window(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, this, section, variables));
 			else if (type == "text")
-				text = new Text(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, fontSize, textColor, parrentWindowJson["sections"][i], variables);
+				text = new Text(subLayerWidth, subLayerHeight, subLayerCornerXPosition, SubLayerCornerYPosition, fontSize, this->padding, textColor, section, variables);
 
 			*shiftingCorner += *variableSide;
 		}
 	}
 public:
+	/*
+		Window konstruktör för det första fönstret i programmet.
+		json: hela programmets json-fil,
+		variables: variabler.
+	*/
 	Window(nlohmann::json json, Variables* variables) {
 		this->parentWindow = nullptr;
 		this->width = json["window_size"][0];
@@ -338,10 +354,11 @@ public:
 		this->selectionColor = { json["selection_color"][0], json["selection_color"][1], json["selection_color"][2], json["selection_color"][3] };
 		this->backgroundColor = { json["background_color"][0], json["background_color"][1], json["background_color"][2], json["background_color"][3] };
 		this->textColor = { json["text_color"][0], json["text_color"][1], json["text_color"][2], json["text_color"][3] };
-		numberOfWindows = json["number_of_sections"];
-		if (numberOfWindows == 0) return;
 
+		if (json["sections"] == nullptr) return;
 		CreateSubWindows(this->width, this->height, this->cornerXPosition, this->cornerYPostiion, json, variables);
+		if (subWindows.size() >= 1)
+			subWindows[0]->selected = true;
 	}
 	Window(int width, int height, int cornerXPosition, int cornerYPostiion, Window* parentWindow, nlohmann::json windowJson, Variables* variables) {
 		this->parentWindow = parentWindow;
@@ -349,83 +366,89 @@ public:
 		this->height = height;
 		this->cornerXPosition = cornerXPosition;
 		this->cornerYPostiion = cornerYPostiion;
-		if (parentWindow != nullptr) {
-			InheritValue<int>(&this->padding, parentWindow->padding, windowJson, "padding");
-			InheritValue<float>(&this->fontSize, parentWindow->fontSize, windowJson, "font_size");
-			InheritColor(&this->borderColor, parentWindow->borderColor, windowJson, "border_color");
-			InheritColor(&this->selectionColor, parentWindow->selectionColor, windowJson, "selection_color");
-			InheritColor(&this->backgroundColor, parentWindow->backgroundColor, windowJson, "background_color");
-			InheritColor(&this->textColor, parentWindow->textColor, windowJson, "text_color");
-		}
-		else {
-			this->padding = windowJson["padding"];
-			this->fontSize = windowJson["font_size"];
-			this->borderColor = { windowJson["border_color"][0], windowJson["border_color"][1], windowJson["border_color"][2], windowJson["border_color"][3] };
-			this->selectionColor = { windowJson["selection_color"][0], windowJson["selection_color"][1], windowJson["selection_color"][2], windowJson["selection_color"][3] };
-			this->backgroundColor = { windowJson["background_color"][0], windowJson["background_color"][1], windowJson["background_color"][2], windowJson["background_color"][3] };
-			this->textColor = { windowJson["text_color"][0], windowJson["text_color"][1], windowJson["text_color"][2], windowJson["text_color"][3] };
-		}
-		numberOfWindows = windowJson["number_of_sections"];
-		if (numberOfWindows == 0) return;
+		InheritValue<int>(&this->padding, parentWindow->padding, windowJson, "padding");
+		InheritValue<float>(&this->fontSize, parentWindow->fontSize, windowJson, "font_size");
+		InheritColor(&this->borderColor, parentWindow->borderColor, windowJson, "border_color");
+		InheritColor(&this->selectionColor, parentWindow->selectionColor, windowJson, "selection_color");
+		InheritColor(&this->backgroundColor, parentWindow->backgroundColor, windowJson, "background_color");
+		InheritColor(&this->textColor, parentWindow->textColor, windowJson, "text_color");
 
+		if (windowJson["sections"] == nullptr) return;
 		CreateSubWindows(this->width, this->height, this->cornerXPosition, this->cornerYPostiion, windowJson, variables);
 	}
 
+	//  Ritar fönstret och dess underfönster på skärmen.
 	void Draw() {
 		DrawBackground();
 		DrawBorder();
+
 		if (selected)
 			DrawSelectionBorder();
+
 		if (text != nullptr)
 			text->Draw();
-
 
 		for (int i = 0; i < subWindows.size(); i++) {
 			subWindows[i]->Draw();
 		}
 	}
 
+	// Anger om fönstret är valt eller inte.
 	void SetSelected(bool value) {
 		this->selected = value;
 	}
 
+	// Tar bort markeringen från underfönstret.
 	void RemoveSelection() {
 		if (subWindows.size() >= 1)
 			subWindows[cursorPosition]->SetSelected(false);
 	}
 
+	// Flyttar markören i den angivna riktningen.
 	void MoveCursor(int direction) {
 		if (subWindows.size() >= 1)
 		{
 			subWindows[cursorPosition]->SetSelected(false);
+
 			cursorPosition += direction;
-			if (cursorPosition >= numberOfWindows)
-				cursorPosition = numberOfWindows - 1;
-			else if (cursorPosition <= 0)
+			if (cursorPosition >= (int)subWindows.size())
 				cursorPosition = 0;
+			else if (cursorPosition < 0)
+				cursorPosition = (int)subWindows.size() - 1;
+
 			subWindows[cursorPosition]->SetSelected(true);
 		}
 	}
 
+	// Returnerar en pekare till fönstret själv eller dess överordnade fönster.
 	Window* EnterSelf() {
 		if (subWindows.size() >= 1)
 			return this;
-		else 
-			return parentWindow;
+
+		SetSelected(true);
+		return parentWindow;
 	}
 
+	// Returnerar en pekare till det valda underfönstret.
 	Window* EnterSelection() {
 		if (subWindows.size() >= 1) {
-			subWindows[cursorPosition]->RemoveSelection();
+			RemoveSelection();
+
+			// Gör så att fönstret som ska gås in i visas upp som valt.
+			// Anars kommer det inte visas någon selection omringning tills markören flyttas på.
 			subWindows[cursorPosition]->MoveCursor(0);
 			return subWindows[cursorPosition]->EnterSelf();
 		}
 		return this;
 	}
 
+	// Returnerar en pekare till det överordnade fönstret om det finns ett. Annars returnerar den en pekare till sig själv.
 	Window* ExitWindow() {
 		if (parentWindow != nullptr) {
 			RemoveSelection();
+
+			// Gör så att fönstret som ska gås ut till visas upp som valt.
+			// Anars kommer det inte visas någon selection omringning tills markören flyttas på.
 			parentWindow->MoveCursor(0);
 			return parentWindow;
 		}
