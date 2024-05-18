@@ -19,32 +19,27 @@ public:
 	std::vector<Variable<float>> variablesFloat;
 	std::vector<Variable<std::string>> variablesString;
 
-
 	/*
 		Returnerar en pekare till en Variable - instans av
 		respektive typ baserat på det angivna namnet.
 	*/
 	Variable<int>* FindVariableInt(std::string name) {
-		for (int i = 0; i < variablesInt.size(); i++) {
+		for (int i = 0; i < variablesInt.size(); i++)
 			if (variablesInt[i].name == name)
 				return &variablesInt[i];
-		}
 	}
 
 	Variable<float>* FindVariableFloat(std::string name) {
-		for (int i = 0; i < variablesFloat.size(); i++) {
+		for (int i = 0; i < variablesFloat.size(); i++)
 			if (variablesFloat[i].name == name)
 				return &variablesFloat[i];
-		}
 	}
 
 	Variable<std::string>* FindVariableString(std::string name) {
-		for (int i = 0; i < variablesString.size(); i++) {
+		for (int i = 0; i < variablesString.size(); i++)
 			if (variablesString[i].name == name)
 				return &variablesString[i];
-		}
 	}
-
 };
 
 /*

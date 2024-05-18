@@ -8,7 +8,7 @@
 #define MOVE_BOTTOM_LEFT (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_D))
 
 int main(int argc, char* argv[]) {
-	// //Initialization 
+	// //Initialization
 
 	std::ifstream file(argv[1]);
 	nlohmann::json json;
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 
 	const int screenWidth = json["window_size"][0];
 	const int screenHeight = json["window_size"][1];
-	InitWindow(screenWidth, screenHeight, "Simple GUI");
+	InitWindow(screenWidth, screenHeight, ((std::string)json["window_name"]).c_str());
 
 	// Initialisering av variabler
 	float framesPerSecond = 0;
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	int framesPassedCurrentLevel = 0;
 	std::string framesPassedSuffix = "";
 
-	// Initialisering av variabler behållaren
+	// Initialisering av variabler behÃ¥llaren
 	Variables variables;
 	variables.variablesInt.push_back({ "frames_passed", &framesPassed });
 	variables.variablesFloat.push_back({ "frames_per_second", &framesPerSecond });
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	variables.variablesInt.push_back({ "frames_passed_prefix", &framesPassedCurrentLevel });
 	variables.variablesString.push_back({ "frames_passed_suffix", &framesPassedSuffix });
 
-	// Initialisering av GUI:n 
+	// Initialisering av GUI:n
 	Window baseLayer(json, &variables);
 	Window* currentSelection = &baseLayer;
 

@@ -1,5 +1,6 @@
 {
   "window_size": [ 1280, 720 ],
+  "window_name": "Simple GUI - Example",
   "type": "window",
   "text_color": [ 255, 255, 255, 255 ],
   "border_color": [ 255, 255, 255, 255 ],
@@ -196,6 +197,7 @@
                   "type": "window",
                   "direction": 0,
                   "font_size": 14,
+                  "border_color": [ 0, 0, 0, 0 ],
                   "sections": [
                     {
                       "type": "window",
